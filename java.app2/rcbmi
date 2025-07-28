@@ -1,0 +1,84 @@
+pipeline {
+    agent any
+
+    environment {
+        // Set your environment variables here if needed
+        JAVA_HOME = "/usr/lib/jvm/java-11-openjdk"
+    }
+
+    tools {
+        maven 'Maven3' // Make sure Maven is configured in Jenkins tools
+        jdk 'JDK11'    // Jenkins-installed JDK name
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo '📦 Checking out source code...'
+                git 'https://github.com/your-username/your-java-app.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo '🔨 Building the application...'
+                sh 'mvn clean compile'
+            }
+        }
+
+        stage('Unit Test') {
+            steps {
+                echo '🧪 Running unit tests...'
+                sh 'mvn test'
+            }
+        }
+
+        stage('Code Quality Check') {
+            steps {
+                echo '🔍 Analyzing code quality using SonarQube...'
+                // SonarQube plugin should be configured
+                withSonarQubeEnv('SonarQubeServer') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo '📦 Packaging application into JAR...'
+                sh 'mvn package'
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                echo '📁 Archiving build artifacts...'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+
+        stage('Deploy (Optional)') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo '🚀 Deploying to staging/production...'
+                // Add Ansible/Docker/Kubernetes deployment steps here
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '✅ Pipeline completed.'
+        }
+        success {
+            echo '🎉 Build succeeded!'
+        }
+        failure {
+            echo '❌ Build failed!'
+        }
+    }
+}
+
