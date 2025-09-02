@@ -13,7 +13,7 @@ default = "t2.micro"
 
 
 variable "bucket_name" {
-description = "S3 bucket name (must be globally unique). Replace this default with your unique name or provide via TF_VAR_bucket_name."
+description = "TF_VAR_bucket_name2"
 type = string
 default = "REPLACE_WITH_UNIQUE_BUCKET_NAME"
 }

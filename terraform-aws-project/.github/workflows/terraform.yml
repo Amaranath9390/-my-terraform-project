@@ -1,0 +1,37 @@
+name: Terraform AWS Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    env:
+      AMARNATH: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      SECRECTKEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -input=false
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false
