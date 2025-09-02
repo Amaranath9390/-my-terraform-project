@@ -1,0 +1,8 @@
+cat > .gitignore <<'EOF'
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+keys/tf_key
+keys/*.ppk
+EOF
+
